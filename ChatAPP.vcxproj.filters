@@ -24,12 +24,18 @@
     <ClCompile Include="Server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Encryption.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Server.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Encryption.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

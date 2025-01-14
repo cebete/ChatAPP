@@ -1,4 +1,5 @@
 #include "Client.hpp"
+#include "Encryption.hpp" // Include the encryption module
 #include <iostream>
 #include <string>
 #include <WinSock2.h>
@@ -7,20 +8,20 @@
 
 #define PORT 8080
 
-void ClientFunction(const std::string& ipAddress)
-{
+void ClientFunction(const std::string& ipAddress) {
+    const unsigned char key[16] = { '1', '2', '3', '4', '5', '6', '7', '8',
+                                   '9', '0', '1', '2', '3', '4', '5', '6' };
+
     PCSTR ipAddressPCSTR = ipAddress.c_str();
 
     WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-    {
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         std::cerr << "WSAStartup failed!" << std::endl;
         return;
     }
 
     SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientSocket == INVALID_SOCKET)
-    {
+    if (clientSocket == INVALID_SOCKET) {
         std::cerr << "Socket creation failed!" << std::endl;
         WSACleanup();
         return;
@@ -31,8 +32,7 @@ void ClientFunction(const std::string& ipAddress)
     inet_pton(AF_INET, ipAddressPCSTR, &serverAddr.sin_addr);
     serverAddr.sin_port = htons(PORT);
 
-    if (connect(clientSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
-    {
+    if (connect(clientSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
         std::cerr << "Connection to server failed!" << std::endl;
         closesocket(clientSocket);
         WSACleanup();
@@ -42,41 +42,48 @@ void ClientFunction(const std::string& ipAddress)
     std::cout << "Connected to server!" << std::endl;
 
     char buffer[1024] = { 0 };
-    while (true)
-    {
+    while (true) {
         std::string message;
 
         // Prompt the user for input
         std::cout << "You: ";
         std::getline(std::cin, message);
 
-        // Skip if the message is empty
-        if (message.empty())
-        {
+        if (message.empty()) {
             continue;
         }
 
-        // Send the message to the server
-        if (send(clientSocket, message.c_str(), message.size(), 0) == SOCKET_ERROR)
-        {
+        // Encrypt the message
+        std::string encryptedMessage = encryptMessage(message, key);
+
+        // Send the encrypted message
+        if (send(clientSocket, encryptedMessage.c_str(), encryptedMessage.size(), 0) == SOCKET_ERROR) {
             std::cerr << "Failed to send message to server!" << std::endl;
             break;
         }
 
-        // Wait for the server's response
+        // Receive encrypted data from the server
         memset(buffer, 0, sizeof(buffer));
-        int bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-        if (bytesRead <= 0)
-        {
+        int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
+        if (bytesRead <= 0) {
             std::cout << "Server disconnected!" << std::endl;
             break;
         }
 
-        // Print the server's response
-        std::cout << "Server: " << buffer << std::endl;
+        // Print the raw encrypted data received from the server
+        std::cout << "Received Encrypted (hex): ";
+        for (int i = 0; i < bytesRead; ++i) {
+            printf("%02x ", (unsigned char)buffer[i]);
+        }
+        std::cout << std::endl;
+
+        // Decrypt the server's response
+        std::string decryptedResponse = decryptMessage(std::string(buffer, bytesRead), key);
+
+        // Print the decrypted message
+        std::cout << "Server (Decrypted): " << decryptedResponse << std::endl;
     }
 
     closesocket(clientSocket);
     WSACleanup();
 }
-
