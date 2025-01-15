@@ -72,7 +72,7 @@ void ClientFunction(const std::string& ipAddress)
 		}
 
 		// Encrypt the message
-		std::string encryptedMessage = encryptMessage(message, key);
+		std::string encryptedMessage = EncryptMessage(message, key);
 
 		// Send the encrypted message
 		if (send(clientSocket, encryptedMessage.c_str(), encryptedMessage.size(), 0) == SOCKET_ERROR)
@@ -99,7 +99,7 @@ void ClientFunction(const std::string& ipAddress)
 		std::cout << std::endl;
 
 		// Decrypt the server's response
-		std::string decryptedResponse = decryptMessage(std::string(buffer, bytesRead), key);
+		std::string decryptedResponse = DecryptMessage(std::string(buffer, bytesRead), key);
 
 		// Print the decrypted message
 		std::cout << "Server (Decrypted): " << decryptedResponse << std::endl;

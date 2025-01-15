@@ -95,7 +95,7 @@ void ServerFunction()
 			std::cout << std::endl;
 
 			// Decrypt the received message
-			std::string decryptedMessage = decryptMessage(std::string(buffer, bytesRead), key);
+			std::string decryptedMessage = DecryptMessage(std::string(buffer, bytesRead), key);
 			std::cout << "Decrypted: " << decryptedMessage << std::endl;
 
 			// Encrypt the server's response
@@ -103,7 +103,7 @@ void ServerFunction()
 			std::cout << "You: ";
 			std::getline(std::cin, reply);
 
-			std::string encryptedReply = encryptMessage(reply, key);
+			std::string encryptedReply = EncryptMessage(reply, key);
 			send(clientSocket, encryptedReply.c_str(), encryptedReply.size(), 0);
 		}
 

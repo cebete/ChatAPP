@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 // Encrypt a message using AES-128 in ECB mode
-std::string encryptMessage(const std::string& message, const unsigned char* key) 
+std::string EncryptMessage(const std::string& message, const unsigned char* key) 
 {
 	EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
 	if (!ctx) 
@@ -40,7 +40,7 @@ std::string encryptMessage(const std::string& message, const unsigned char* key)
 }
 
 // Decrypt a message using AES-128 in ECB mode
-std::string decryptMessage(const std::string& encryptedMessage, const unsigned char* key) 
+std::string DecryptMessage(const std::string& encryptedMessage, const unsigned char* key) 
 {
 	EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
 	if (!ctx) 

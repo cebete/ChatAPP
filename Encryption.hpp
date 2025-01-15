@@ -4,9 +4,9 @@
 #include <string>
 
 // Encrypt a message using AES
-std::string encryptMessage(const std::string& message, const unsigned char* key);
+std::string EncryptMessage(const std::string& message, const unsigned char* key);
 
 // Decrypt a message using AES
-std::string decryptMessage(const std::string& encryptedMessage, const unsigned char* key);
+std::string DecryptMessage(const std::string& encryptedMessage, const unsigned char* key);
 
 #endif // ENCRYPTION_HPP
